@@ -2,7 +2,7 @@ const jwt=require('jsonwebtoken');
 const AppError=require('../utils/appError');
 const Email=require('../utils/email');
 const catchAsync=require('../utils/catchAsync');
-
+const { promisify } = require('util');
 const signToken = (id) => {
     return jwt.sign({ id: id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
@@ -39,9 +39,9 @@ exports.login=(Model)=>{
     if(!email || !password) {
         return next(new AppError('Please enter email or password',404));
     }
-    const user=await Model.findOne({email}).select('+password');
-   
-    //console.log(user.password)
+    const user=await Model.findOne({email}).select('+password');   
+    // console.log(user.password)
+    // let x=await (user.correctPassword(password,user.password))
     if(!user || !await (user.correctPassword(password,user.password))){
         return next (new AppError('Invalid password or email',401));
     }
@@ -89,3 +89,15 @@ exports.protect =(Model)=> {
     next();
   });
   }
+
+exports.restrictTo = (...roles) => {
+    return (req, res, next) => {
+      //role['admin','lead-guide'] role='user
+      if (!roles.includes(req.user.role)) {
+        return next(
+          new AppError('You do not have permission to perform this action', 403)
+        );
+      }
+      next();
+    };
+  };

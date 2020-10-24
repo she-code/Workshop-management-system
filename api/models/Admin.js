@@ -1,5 +1,6 @@
 const mongoose =require('mongoose');
 const validator=require('validator');
+const bcrypt=require('bcryptjs');
 
 const adminSchema=new mongoose.Schema({
     fname:{
@@ -63,9 +64,40 @@ const adminSchema=new mongoose.Schema({
     },
     role:{
         type:String,
-        default:'admin'    }
+        default:'admin'    },
+    
 
-})
 
+},    {timestaps:true})
+//encrypting the password
+adminSchema.pre('save', async function (next) {
+    //if the password is not modified skip
+    if (!this.isModified('password')) return next();
+    //ecrypted version
+    this.password = await bcrypt.hash(this.password, 12);
+    //delete password confirm
+    this.password2 = undefined;
+    next();
+  });
+adminSchema.methods.correctPassword = async function (
+    candidatePassword,
+    adminPassword
+  ) {
+    return await bcrypt.compare(candidatePassword, adminPassword);
+  };
+  
+  adminSchema.methods.changePasswordAfter = function (JWTTimestamp) {
+    if (this.passwordChangedAt) {
+      const changedTimestamp = parseInt(
+        this.passwordChangedAt.getTime() / 1000,
+        10
+      );
+      //console.log(changedTimestamp, JWTTimestamp);
+      return JWTTimestamp < changedTimestamp;
+    }
+    //no change
+    return false;
+  };
+  
 const Admin=mongoose.model('Admin',adminSchema);
 module.exports=Admin;

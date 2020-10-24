@@ -8,7 +8,8 @@ exports.getAllDocuments = (Modal) =>
     // only the reviews where the id matches r displayed
 
     let filter = {};
-    if (req.params.tourId) filter = { tour: req.params.tourId };
+    if (req.params.workshopID) filter = { workshop: req.params.workshopID };
+    if (req.params.participantID) filter = { leader: req.params.participantID };
 
     const features = new APIFeatures(Modal.find(filter), req.query)
       .filter()

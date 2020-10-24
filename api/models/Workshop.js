@@ -9,6 +9,7 @@ const workshopSchema = new mongoose.Schema({
         trim: true,
         minlength: [2, "A title must contain chracters greater than 2"],
         maxlength: [25, "A title must contain chracters smaller than 25"],
+        unique:true
     },
     venue: {
         type: String,
@@ -25,21 +26,26 @@ const workshopSchema = new mongoose.Schema({
         type: Date,
         required: [true, "Please insert deadline"]
     },
+
     // projects:[{
     //     type:mongoose.Schema.ObjectId,
     //     ref:'Project'
     // }],
-    teams: [{
-        type: mongoose.Schema.ObjectId,
-        ref: 'Team'
-    }]
-});
+    // teams: [{
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: 'Team'
+    // }]
+},
+{
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  });
 
-// workshopSchema.virtual('reviews', {
-//     ref: 'Project',
-//     foreignField: 'workshop',
-//     localField: '_id',
-// });
+workshopSchema.virtual('projects', {
+    ref: 'Project',
+    foreignField: 'workshop',
+    localField: '_id',
+});
 
 
 const Workshop = mongoose.model('Workshop', workshopSchema);

@@ -1,6 +1,10 @@
 const catchAsync=require('../utils/catchAsync');
 const handleCRUD=require('./handleCRUD');
 const Workshop=require('../models/Workshop');
-
+const auth=require('./auth');
 exports.createWorkshop=handleCRUD.createOne(Workshop);
 exports.getAllworkshops=handleCRUD.getAllDocuments(Workshop);
+exports.updateWorkshop=handleCRUD.updateOne(Workshop);
+exports.getWorkshop=handleCRUD.getSingleDoc(Workshop,{path:'projects',select:'title -advisors -workshop -_id ' });
+exports.deleteWorkshop=handleCRUD.deleteOne(Workshop)
+//exports.protect=auth.protect()

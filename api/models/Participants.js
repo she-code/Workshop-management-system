@@ -68,7 +68,15 @@ const participantSchema=new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'participant'
     },
-    workshopID: {
+    project: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Project'
+  },
+    team: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Team'
+  },
+    workshop: {
       type: mongoose.Schema.ObjectId,
       ref: 'Workshop'
   },
@@ -83,6 +91,7 @@ const participantSchema=new mongoose.Schema({
     inviteMemberToken:String,
     inviteTokenExpires:Date
 
+    
 }, {toJSON: {
   virtuals: true,
 },
@@ -135,7 +144,27 @@ participantSchema.methods.createInviteToken=function(){
   this.inviteTokenExpires=Date.now() + 10 * 60 *1000;
   return inviteToken;
 }
+// participantSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'project',
+//   });
+//   next();
+// });
+
+// participantSchema.virtual('projects', {
+//   ref: 'Project',
+//   foreignField: 'assignedTo',
+//   localField: '_id',
+// });
+participantSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'workshop',
+      select:'name'
+  });
+  next();
+});
 
 const Participant=mongoose.model('Participant',participantSchema);
 //exports.participant=participant;
 module.exports=Participant;
+

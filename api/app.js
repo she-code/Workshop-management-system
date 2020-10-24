@@ -13,6 +13,9 @@ const participantsRoute=require('./routes/participants');
 const advisorRoute=require('./routes/advisor');
 const authRoute=require('./routes/auth');
 const teamRoute=require('./routes/team');
+const globalErrorHandler=require('./controllers/error');
+const taskRoute = require ('./routes/tasks');
+
 const {ensureAuth,ensureGuest} =require('./controllers/authorize');
 
 
@@ -28,23 +31,23 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// app.use((req,res,next)=>{
-//     res.header('Access-Control-Allow-Origin','*');
-//     res.header('Access-Control-Allow-Headers',"Origin,X-Requested-With,Content-Type,Accept,Authorization");
-//      if(req.method === 'OPTIONS') {
-//         res.header('Access-Control-Allow-Methods','GET,PUT,POST,PATCH,DELETE');
-//         return res.status(200).json({});
+app.use((req,res,next)=>{
+    res.header('Access-Control-Allow-Origin','*');
+    res.header('Access-Control-Allow-Headers',"Origin,X-Requested-With,Content-Type,Accept,Authorization");
+     if(req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods','GET,PUT,POST,PATCH,DELETE');
+        return res.status(200).json({});
 
-//    }
-//     next();
-// });
+   }
+    next();
+});
 
 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:3000"
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 ///Session middelware
@@ -81,8 +84,17 @@ app.use('/api/v1/participants',participantsRoute);
 app.use('/api/v1/advisor',advisorRoute);
 app.use('/api/v1/auth',authRoute);
 app.use('/api/v1/team',teamRoute);
+app.use('/api/v1/tasks',taskRoute);
 
 
+//error when the route is not ready
+app.use('*',(req,res,next)=>{
+  console.log('Route is not ready');
+  next();
+})
+
+
+app.use(globalErrorHandler);
 
 
 

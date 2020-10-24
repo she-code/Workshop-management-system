@@ -77,6 +77,7 @@ const advisorSchema=new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Project'
     },
+
 })
 
 const Advisor=mongoose.model('Advisor',advisorSchema);

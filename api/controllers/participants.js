@@ -37,32 +37,6 @@ exports.setworkshopID=(req,res,next)=>{
     ///console.log(req.body.workshopID)
     next();
 }
-exports.inviteMembers=catchAsync(async (req,res,next)=>{
-    // const user
-    // const resetToken=
-    const {email}=req.body;
-    const url=`${req.protocol}://${req.get(
-        'host'
-      )}/api/v1/users/resetPassword/${resetToken}`;
-      
-    let transporter = nodemailer.createTransport({
-        host:process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        auth: {
-          user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD
-        }
-      });
-    transporter.sendMail({
-    from: '"Fred Foo 👻" <foo@example.com>', 
-    to: email,
-    subject: "Hello ✔", 
-    text: "Hello world?", 
-    html: "<b>Hello world?</b>", 
-    })
-    
-      res.json('email sent')
-})
-exports.addMember=catchAsync(async (req,res,next) => {
-  const member=await Participant.create({})
-})
+exports.getParticipant=handleCRUD.getSingleDoc(Participant,{path:'project'});
+exports.updateParticipant=handleCRUD.updateOne(Participant);
+exports.deleteParticipant=handleCRUD.deleteOne(Participant);

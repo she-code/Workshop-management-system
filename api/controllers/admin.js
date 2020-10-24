@@ -9,3 +9,6 @@ exports.getAllAdmins=handleCRUD.getAllDocuments(Admin);
 exports.getAdmin=handleCRUD.getSingleDoc(Admin);
 exports.updateAdmin=handleCRUD.updateOne(Admin);
 exports.deleteAdmin=handleCRUD.deleteOne(Admin);
+
+exports.protect=auth.protect(Admin);
+exports.login=auth.login(Admin)

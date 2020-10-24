@@ -43,7 +43,7 @@ const projectSchema = new mongoose.Schema({
     },
     assignedTo: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Team'
+        ref: 'Participant'
     },
     assigned: {
         type: Boolean,
@@ -58,12 +58,25 @@ const projectSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Advisor'
     }],
+    team: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Team'
+    },
 
 }, {
     toJSON: {
         virtuals: true
     }
 });
+
+projectSchema.pre(/^find/, function (next) {
+    this.populate({
+      path: 'assignedTo',
+        select:'fname'
+    });
+    next();
+  });
+  
 
 // projectSchema.virtual('members', {
 //     ref: 'Participant',
